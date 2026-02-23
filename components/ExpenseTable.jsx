@@ -123,15 +123,15 @@ export default function ExpenseTable({ gastos, loading, onDelete, onEdit }) {
     );
 
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
             {loading ? loadingState : gastos.length === 0 ? emptyState : (
                 <>
                     {/* Mobile: card list */}
                     <div className="show-mobile">
                         <MobileList gastos={gastos} onDelete={onDelete} onEdit={onEdit} />
                     </div>
-                    {/* Desktop: full table */}
-                    <div className="show-desktop">
+                    {/* Desktop: full table — fills remaining card height */}
+                    <div className="show-desktop" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                         <DesktopTable gastos={gastos} onDelete={onDelete} onEdit={onEdit} />
                     </div>
                 </>

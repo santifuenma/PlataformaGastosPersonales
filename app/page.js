@@ -16,27 +16,47 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
 }
 
-// ── Toast system ──────────────────────────────────────────
+// ── Toast ──────────────────────────────────────────────────
 function ToastContainer({ toasts }) {
     return (
         <div className="toast-container">
             {toasts.map((t) => (
-                <div key={t.id} className={`toast toast-${t.type}`}>
-                    {t.message}
-                </div>
+                <div key={t.id} className={`toast toast-${t.type}`}>{t.message}</div>
             ))}
         </div>
     );
 }
 
-// ── Bottom sheet (mobile add form) ────────────────────────
+// ── Add Expense Modal (desktop popup) ─────────────────────
+function AddExpenseModal({ open, onClose, children }) {
+    useEffect(() => {
+        if (open) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = '';
+        return () => { document.body.style.overflow = ''; };
+    }, [open]);
+
+    if (!open) return null;
+
+    return (
+        <div className="add-modal-backdrop" onClick={onClose}>
+            <div className="add-modal-box" onClick={(e) => e.stopPropagation()}>
+                <div className="add-modal-header">
+                    <span>✏️ Nuevo Gasto</span>
+                    <button className="modal-close" onClick={onClose}>✕</button>
+                </div>
+                <div className="add-modal-body">
+                    {children}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ── Bottom sheet (mobile) ─────────────────────────────────
 function BottomSheet({ open, onClose, children }) {
     useEffect(() => {
-        if (open) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+        if (open) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = '';
         return () => { document.body.style.overflow = ''; };
     }, [open]);
 
@@ -63,16 +83,14 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [toasts, setToasts] = useState([]);
     const [editingGasto, setEditingGasto] = useState(null);
-    const [showAddSheet, setShowAddSheet] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
 
-    // ── Toast helpers
     const addToast = useCallback((type, message) => {
         const id = Date.now();
         setToasts((prev) => [...prev, { id, type, message }]);
         setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500);
     }, []);
 
-    // ── Fetch gastos
     const fetchGastos = useCallback(async (month) => {
         setLoading(true);
         try {
@@ -89,10 +107,9 @@ export default function Home() {
 
     useEffect(() => { fetchGastos(mes); }, [mes, fetchGastos]);
 
-    // ── Handlers
     const handleGastoAdded = (newGasto, type, message) => {
         addToast(type, message);
-        setShowAddSheet(false);
+        setShowAddModal(false);
         if (newGasto && newGasto.mes === mes) {
             setGastos((prev) =>
                 [...prev, newGasto].sort((a, b) => a.fecha.localeCompare(b.fecha))
@@ -126,7 +143,6 @@ export default function Home() {
         addToast('success', '✅ Gasto actualizado correctamente');
     };
 
-    // ── Stats
     const total = gastos.reduce((sum, g) => sum + parseFloat(g.monto), 0);
     const maxGasto = gastos.length > 0 ? Math.max(...gastos.map((g) => parseFloat(g.monto))) : 0;
 
@@ -142,6 +158,16 @@ export default function Home() {
                             <div className="header-title">Plataforma de Consumos</div>
                             <div className="header-subtitle">Registro y control de gastos mensuales</div>
                         </div>
+                    </div>
+
+                    {/* Action buttons — top right, desktop only */}
+                    <div className="header-actions">
+                        <button
+                            className="btn btn-primary btn-header-action"
+                            onClick={() => setShowAddModal(true)}
+                        >
+                            <span>＋</span> Agregar Consumo
+                        </button>
                     </div>
                 </header>
 
@@ -161,37 +187,29 @@ export default function Home() {
                     </div>
                 </div>
 
-                {/* ── Main grid ── */}
+                {/* ── Main grid: CategorySummary | Table ── */}
                 <div className="main-grid">
 
-                    {/* Left sidebar — desktop only */}
-                    <aside className="desktop-sidebar">
-                        <div className="card">
-                            <div className="card-title">
-                                <span className="icon">✏️</span> Nuevo Gasto
+                    {/* Left: Category Summary + Export (desktop only) */}
+                    <aside className="desktop-cat-panel">
+                        <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <CategorySummary gastos={gastos} />
+                            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14, marginTop: 'auto' }}>
+                                <ExportButton onToast={addToast} />
                             </div>
-                            <ExpenseForm onGastoAdded={handleGastoAdded} />
-                        </div>
-
-                        <div className="card" style={{ marginTop: 20 }}>
-                            <div className="card-title">
-                                <span className="icon">📥</span> Exportar Excel
-                            </div>
-                            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.7 }}>
-                                Genera y descarga un archivo Excel con todos los meses registrados, una hoja por mes.
-                            </p>
-                            <ExportButton onToast={addToast} />
                         </div>
                     </aside>
 
-                    {/* Right column */}
-                    <div className="right-column">
+                    {/* Right: Month + Table (all screens) */}
+                    <div className="table-column">
 
-                        {/* Category Summary — above the table */}
-                        <CategorySummary gastos={gastos} />
+                        {/* Category Summary on mobile/tablet */}
+                        <div className="show-mobile">
+                            <CategorySummary gastos={gastos} />
+                        </div>
 
-                        {/* Month selector + Table */}
-                        <div className="card">
+                        {/* Month selector + Table card */}
+                        <div className="card table-card-stretch">
                             <MonthSelector value={mes} onChange={setMes} />
                             <div className="divider" />
                             <ExpenseTable
@@ -202,36 +220,44 @@ export default function Home() {
                             />
                         </div>
 
-                        {/* Export button — mobile only */}
+                        {/* Export on mobile */}
                         <div className="mobile-export">
                             <div className="card">
                                 <div className="card-title">
                                     <span className="icon">📥</span> Exportar Excel
                                 </div>
-                                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.7 }}>
-                                    Genera y descarga un archivo Excel con todos los meses registrados, una hoja por mes.
-                                </p>
                                 <ExportButton onToast={addToast} />
                             </div>
                         </div>
 
                     </div>
+
                 </div>
             </div>
 
             {/* ── FAB — mobile only ── */}
             <button
                 className="fab"
-                onClick={() => setShowAddSheet(true)}
+                onClick={() => setShowAddModal(true)}
                 aria-label="Añadir gasto"
             >
                 ＋
             </button>
 
-            {/* ── Bottom sheet (mobile add form) ── */}
-            <BottomSheet open={showAddSheet} onClose={() => setShowAddSheet(false)}>
-                <ExpenseForm onGastoAdded={handleGastoAdded} />
-            </BottomSheet>
+            {/* ── Add Expense Modal (both mobile bottom sheet & desktop popup) ── */}
+            {/* Desktop: centered modal */}
+            <div className="show-desktop">
+                <AddExpenseModal open={showAddModal} onClose={() => setShowAddModal(false)}>
+                    <ExpenseForm onGastoAdded={handleGastoAdded} />
+                </AddExpenseModal>
+            </div>
+
+            {/* Mobile: bottom sheet */}
+            <div className="show-mobile">
+                <BottomSheet open={showAddModal} onClose={() => setShowAddModal(false)}>
+                    <ExpenseForm onGastoAdded={handleGastoAdded} />
+                </BottomSheet>
+            </div>
 
             <ToastContainer toasts={toasts} />
 

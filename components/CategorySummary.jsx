@@ -24,7 +24,6 @@ export default function CategorySummary({ gastos }) {
 
     const total = gastos.reduce((sum, g) => sum + parseFloat(g.monto), 0);
 
-    // Build totals per category
     const totals = {};
     for (const c of CATEGORIAS) totals[c] = 0;
     for (const g of gastos) {
@@ -33,7 +32,6 @@ export default function CategorySummary({ gastos }) {
         else totals['Varios'] += parseFloat(g.monto);
     }
 
-    // Only show categories with spending
     const active = CATEGORIAS.filter((c) => totals[c] > 0);
 
     return (
@@ -48,25 +46,24 @@ export default function CategorySummary({ gastos }) {
                     const pct = total > 0 ? (totals[cat] / total) * 100 : 0;
 
                     return (
-                        <div className="cat-row" key={cat}>
-                            <div className="cat-row-left">
+                        <div className="cat-item" key={cat}>
+                            {/* Row 1: icon + name + amount */}
+                            <div className="cat-item-header">
                                 <span className="cat-icon">{cfg.icon}</span>
                                 <span className="cat-name">{cat}</span>
-                            </div>
-                            <div className="cat-row-right">
-                                <div className="cat-bar-wrap">
-                                    <div
-                                        className="cat-bar-fill"
-                                        style={{
-                                            width: `${pct}%`,
-                                            background: cfg.color,
-                                        }}
-                                    />
-                                </div>
-                                <span className="cat-pct">{pct.toFixed(0)}%</span>
                                 <span className="cat-amount" style={{ color: cfg.color }}>
                                     {formatCurrency(totals[cat])}
                                 </span>
+                            </div>
+                            {/* Row 2: bar + percentage */}
+                            <div className="cat-item-bar-row">
+                                <div className="cat-bar-wrap">
+                                    <div
+                                        className="cat-bar-fill"
+                                        style={{ width: `${pct}%`, background: cfg.color }}
+                                    />
+                                </div>
+                                <span className="cat-pct">{pct.toFixed(0)}%</span>
                             </div>
                         </div>
                     );
