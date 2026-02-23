@@ -1,0 +1,32 @@
+﻿
+> plataforma-consumos@0.1.0 build
+> next build
+
+  Ôû▓ Next.js 14.2.5
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+   Generating static pages (3/4) 
+ Ô£ô Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Ôöî Ôùï /                                    3.08 kB        90.1 kB
+Ôö£ Ôùï /_not-found                          871 B          87.9 kB
+Ôö£ ãÆ /api/export                          0 B                0 B
+Ôöö ãÆ /api/gastos                          0 B                0 B
++ First Load JS shared by all            87 kB
+  Ôö£ chunks/23-f3bd2664991ff6e1.js        31.5 kB
+  Ôö£ chunks/fd9d1056-1f4c605cebad2e8d.js  53.6 kB
+  Ôöö other shared chunks (total)          1.86 kB
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
