@@ -155,19 +155,14 @@ export default function Home() {
                     <div className="header-brand">
                         <div className="header-icon">💰</div>
                         <div>
-                            <div className="header-title">Plataforma de Consumos</div>
+                            <div className="header-title">Plataforma de Gastos</div>
                             <div className="header-subtitle">Registro y control de gastos mensuales</div>
                         </div>
                     </div>
 
                     {/* Action buttons — top right, desktop only */}
                     <div className="header-actions">
-                        <button
-                            className="btn btn-primary btn-header-action"
-                            onClick={() => setShowAddModal(true)}
-                        >
-                            <span>＋</span> Agregar Consumo
-                        </button>
+                        <ExportButton onToast={addToast} isHeader={true} />
                     </div>
                 </header>
 
@@ -195,7 +190,13 @@ export default function Home() {
                         <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                             <CategorySummary gastos={gastos} />
                             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14, marginTop: 'auto' }}>
-                                <ExportButton onToast={addToast} />
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => setShowAddModal(true)}
+                                    style={{ width: '100%' }}
+                                >
+                                    <span>＋</span> Agregar Gasto
+                                </button>
                             </div>
                         </div>
                     </aside>

@@ -4,7 +4,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-    title: 'Plataforma de Consumos',
+    title: 'Plataforma de Gastos',
     description: 'Registro y control de gastos mensuales',
 };
 

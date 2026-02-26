@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-export default function ExportButton({ onToast }) {
+export default function ExportButton({ onToast, isHeader = false }) {
     const [loading, setLoading] = useState(false);
 
     const handleExport = async () => {
@@ -37,12 +37,12 @@ export default function ExportButton({ onToast }) {
     };
 
     return (
-        <div className="export-section" style={{ width: '100%', overflow: 'hidden' }}>
+        <div className={isHeader ? "" : "export-section"} style={isHeader ? {} : { width: '100%', overflow: 'hidden' }}>
             <button
-                className="btn btn-success"
+                className={`btn btn-success ${isHeader ? 'btn-header-action' : ''}`}
                 onClick={handleExport}
                 disabled={loading}
-                style={{ width: '100%', minWidth: 0 }}
+                style={isHeader ? {} : { width: '100%', minWidth: 0 }}
             >
                 {loading ? (
                     <><span className="spinner" /> Generando…</>
