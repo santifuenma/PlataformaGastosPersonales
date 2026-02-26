@@ -120,6 +120,10 @@ export default function Home() {
     };
 
     const handleDelete = async (id) => {
+        if (!window.confirm('¿Estás seguro de que quieres eliminar este gasto?')) {
+            return;
+        }
+
         try {
             const res = await fetch(`/api/gastos?id=${id}`, { method: 'DELETE' });
             const data = await res.json();
