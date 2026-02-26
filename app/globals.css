@@ -946,6 +946,16 @@ tbody tr:hover {
   .show-desktop {
     display: block;
   }
+
+  .show-desktop.desktop-table-container {
+    display: flex;
+  }
+}
+
+.desktop-table-container {
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
 }
 
 /* ========================

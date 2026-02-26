@@ -131,7 +131,7 @@ export default function ExpenseTable({ gastos, loading, onDelete, onEdit }) {
                         <MobileList gastos={gastos} onDelete={onDelete} onEdit={onEdit} />
                     </div>
                     {/* Desktop: full table — fills remaining card height */}
-                    <div className="show-desktop" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+                    <div className="show-desktop desktop-table-container">
                         <DesktopTable gastos={gastos} onDelete={onDelete} onEdit={onEdit} />
                     </div>
                 </>
